@@ -3,15 +3,22 @@ package airport;
 import com.skillbox.airport.Aircraft;
 import com.skillbox.airport.Airport;
 import com.skillbox.airport.Flight;
+import com.skillbox.airport.Terminal;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Count aircrafts witch point out model: " + findCountAircraftWithModelAirbus(Airport.getInstance(), "Boeing 737-200"));
+        String model = "Boeing";
+        Airport airport = Airport.getInstance();
+        System.out.println("Count all aircraft witch found model \"" + model + "\": " +
+                findCountAircraftWithModelAirbus(airport, model));
+
+        System.out.println("List flights, which through two hours: " +
+                findFlightsLeavingInTheNextHours(airport, 2));
     }
 
     public static long findCountAircraftWithModelAirbus(Airport airport, String model) {
@@ -19,9 +26,8 @@ public class Main {
         // подходят те самолеты, у которых name начинается со строки model
         return airport.getAllAircrafts().stream()
                 .map(Aircraft::getModel)
-                .filter(mod1 -> mod1.equals(model))
+                .filter(currentModel -> currentModel.contains(model))
                 .count();
-
     }
 
     public static Map<String, Integer> findMapCountParkedAircraftByTerminalName(Airport airport) {
@@ -31,7 +37,17 @@ public class Main {
 
     public static List<Flight> findFlightsLeavingInTheNextHours(Airport airport, int hours) {
         //TODO Метод должен вернуть список отправляющихся рейсов в ближайшее количество часов.
-        return Collections.emptyList();
+        long second = hours * 1000 * 60 * 60;
+        Instant instantNow = Instant.now();
+        return airport.getTerminals().stream()
+                .map(Terminal::getFlights)
+                .flatMap(List::stream)
+                .filter(flight -> {
+                    return flight.getType().equals(Flight.Type.DEPARTURE)
+                            && flight.getDate().isAfter(instantNow)
+                            && flight.getDate().isBefore(instantNow.plusSeconds(second));
+                })
+                .collect(Collectors.toList());
     }
 
     public static Optional<Flight> findFirstFlightArriveToTerminal(Airport airport, String terminalName) {
