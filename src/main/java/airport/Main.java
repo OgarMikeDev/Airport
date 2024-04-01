@@ -32,12 +32,13 @@ public class Main {
 
     public static Map<String, Integer> findMapCountParkedAircraftByTerminalName(Airport airport) {
         //TODO Метод должен вернуть словарь с количеством припаркованных самолетов в каждом терминале.
-        return Collections.emptyMap();
+        return airport.getTerminals().stream()
+                .collect(Collectors.toMap(Terminal::getName, col -> col.getParkedAircrafts().size()));
     }
 
     public static List<Flight> findFlightsLeavingInTheNextHours(Airport airport, int hours) {
         //TODO Метод должен вернуть список отправляющихся рейсов в ближайшее количество часов.
-        long second = hours * 1000 * 60 * 60;
+        long second = hours * 60 * 60;
         Instant instantNow = Instant.now();
         return airport.getTerminals().stream()
                 .map(Terminal::getFlights)
@@ -52,6 +53,23 @@ public class Main {
 
     public static Optional<Flight> findFirstFlightArriveToTerminal(Airport airport, String terminalName) {
         //TODO Найти ближайший прилет в указанный терминал.
-        return Optional.empty();
+
+        Instant instant = Instant.now();
+
+        Terminal requestedTerminal = airport.getTerminals()
+                .stream()
+                .filter(t -> t.getName().equals(terminalName))
+                .findFirst()
+                .orElse(null);
+
+
+        if (requestedTerminal == null) {
+            return Optional.empty();
+        }
+
+        return requestedTerminal.getFlights().stream()
+                .filter(pol -> pol.getType() == Flight.Type.ARRIVAL
+                        && pol.getDate().isAfter(instant))
+                .min(Comparator.comparing(pol -> pol.getDate()));
     }
 }
