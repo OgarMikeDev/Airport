@@ -33,7 +33,8 @@ public class Main {
     public static Map<String, Integer> findMapCountParkedAircraftByTerminalName(Airport airport) {
         //TODO Метод должен вернуть словарь с количеством припаркованных самолетов в каждом терминале.
         return airport.getTerminals().stream()
-                .collect(Collectors.toMap(Terminal::getName, col -> col.getParkedAircrafts().size()));
+                .collect(Collectors.toMap(Terminal::getName,
+                        terminal -> terminal.getParkedAircrafts().size()));
     }
 
     public static List<Flight> findFlightsLeavingInTheNextHours(Airport airport, int hours) {
