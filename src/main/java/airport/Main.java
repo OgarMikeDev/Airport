@@ -57,7 +57,7 @@ public class Main {
 
         Terminal firstTerminal =
                 airport.getTerminals().stream()
-                        .filter(currentTerminalName -> currentTerminalName.getName().equals(terminalName))
+                        .filter(currentTerminal-> currentTerminal.getName().equals(terminalName))
                         .findFirst()
                         .orElse(null);
 
