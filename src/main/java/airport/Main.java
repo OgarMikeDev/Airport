@@ -53,23 +53,21 @@ public class Main {
 
     public static Optional<Flight> findFirstFlightArriveToTerminal(Airport airport, String terminalName) {
         //TODO Найти ближайший прилет в указанный терминал.
+        Instant instantNow = Instant.now();
 
-        Instant instant = Instant.now();
-
-        Terminal requestedTerminal = airport.getTerminals()
-                .stream()
-                .filter(t -> t.getName().equals(terminalName))
+        Terminal firstTerminal =
+                airport.getTerminals().stream()
+                .filter(currentTerminalName -> currentTerminalName.getName().equals(terminalName))
                 .findFirst()
                 .orElse(null);
 
-
-        if (requestedTerminal == null) {
+        if (firstTerminal.equals(null)) {
             return Optional.empty();
         }
 
-        return requestedTerminal.getFlights().stream()
-                .filter(pol -> pol.getType() == Flight.Type.ARRIVAL
-                        && pol.getDate().isAfter(instant))
-                .min(Comparator.comparing(pol -> pol.getDate()));
+        return firstTerminal.getFlights().stream()
+                .filter(currentFlight -> currentFlight.getType().equals(Flight.Type.ARRIVAL)
+                        && currentFlight.getDate().isAfter(instantNow))
+                .min(Comparator.comparing(flight -> flight.getDate()));
     }
 }
