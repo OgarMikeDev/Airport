@@ -57,11 +57,11 @@ public class Main {
 
         Terminal firstTerminal =
                 airport.getTerminals().stream()
-                .filter(currentTerminalName -> currentTerminalName.getName().equals(terminalName))
-                .findFirst()
-                .orElse(null);
+                        .filter(currentTerminalName -> currentTerminalName.getName().equals(terminalName))
+                        .findFirst()
+                        .orElse(null);
 
-        if (firstTerminal.equals(null)) {
+        if (firstTerminal == null) {
             return Optional.empty();
         }
 
